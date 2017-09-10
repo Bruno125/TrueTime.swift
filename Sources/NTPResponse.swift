@@ -39,7 +39,14 @@ struct NTPResponse {
     }
 }
 
-func bestTime(fromResponses times: [[FrozenNetworkTime]]) -> FrozenNetworkTime? {
+func bestTime(fromResponses times: [[FrozenNetworkTime]], host: String, atEnd: Bool) -> FrozenNetworkTime? {
+    if(atEnd){
+        times.flatMap { $0 }.forEach { (content) in
+            print("Custom log:\(host)|\(content.serverResponse.delay)|\(content.serverResponse.offset)")
+        }
+    }
+    
+    
     let bestTimes = times.map { serverTimes -> FrozenNetworkTime? in
         serverTimes.min { $0.serverResponse.delay < $1.serverResponse.delay }
     }.flatMap { $0 }.sorted { $0.serverResponse.offset < $1.serverResponse.offset }
@@ -50,8 +57,8 @@ func bestTime(fromResponses times: [[FrozenNetworkTime]]) -> FrozenNetworkTime? 
 private extension NTPResponse {
     var isValidResponse: Bool {
         return packet.stratum > 0 && packet.stratum < 16 &&
-               packet.root_delay.durationInMilliseconds < maxRootDispersion &&
-               packet.root_dispersion.durationInMilliseconds < maxRootDispersion &&
+               //packet.root_delay.durationInMilliseconds < maxRootDispersion &&
+               //packet.root_dispersion.durationInMilliseconds < maxRootDispersion &&
                packet.client_mode == ntpModeServer &&
                packet.leap_indicator != leapIndicatorUnknown &&
                abs(receiveTime.milliseconds -
@@ -67,7 +74,7 @@ private extension NTPResponse {
     }
 }
 
-private let maxRootDispersion: Int64 = 100
+private let maxRootDispersion: Int64 = 100000
 private let maxDelayDelta: Int64 = 100
 private let ntpModeServer: UInt8 = 4
 private let leapIndicatorUnknown: UInt8 = 3

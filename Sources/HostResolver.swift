@@ -181,6 +181,7 @@ private extension HostResolver {
             }.flatMap { $0 }
 
             self.resolved = true
+            
             self.debugLog("Resolved hosts: \(socketAddresses)")
             self.complete(.success(socketAddresses))
         }

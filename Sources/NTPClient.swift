@@ -196,7 +196,7 @@ private extension NTPClient {
             }
 
             self.debugLog("Got \(sampleSize) out of \(expectedCount)")
-            if let time = bestTime(fromResponses: times) {
+            if let time = bestTime(fromResponses: times, host: host, atEnd: atEnd) {
                 let time = FrozenNetworkTime(networkTime: time,
                                              sampleSize: sampleSize,
                                              pool: pool)
